@@ -1,4 +1,4 @@
-import config as cfg
+import time
 import gdax
 
 class GdaxApi(object):
@@ -24,11 +24,22 @@ class GdaxApi(object):
         if 'message' in ticker:
             raise Exception(ticker['message'])
 
+        rate = self.ac.get_product_24hr_stats(symbol)
+        if 'message' in rate:
+            raise Exception(ticker['message'])
+        ticker['open'] = float(rate['open'])
+
+        ticker['rate'] = (float(ticker['price']) - ticker['open']) / ticker['open']
+        ticker['rate_percent'] = ticker['rate'] * 100
+
         return ticker
 
-    def get_balance(self, user_id):
-        ac = gdax.AuthenticatedClient(cfg.key[user_id], cfg.b64secret[user_id], cfg.passphrase[user_id])
+    def get_change(self, symbol):
+        if "-" not in symbol:
+            symbol = symbol + "-EUR"
 
+    def get_balance(self, credentials):
+        ac = gdax.AuthenticatedClient(credentials['gdax_key'], credentials['gdax_b64'], credentials['gdax_pass'])
         accounts = ac.get_accounts()
         balance = {}
         hold = {}
@@ -39,9 +50,7 @@ class GdaxApi(object):
 
         return (balance, hold)
 
-    def get_orders(self, user_id):
-        ac = gdax.AuthenticatedClient(cfg.key[user_id], cfg.b64secret[user_id], cfg.passphrase[user_id])
-
+    def get_orders(self, credentials):
+        ac = gdax.AuthenticatedClient(credentials['gdax_key'], credentials['gdax_b64'], credentials['gdax_pass'])
         orders = ac.get_orders()
-
         return orders

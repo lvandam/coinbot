@@ -1,4 +1,3 @@
-import config as cfg
 from time import time
 import hashlib
 import hmac
@@ -10,7 +9,7 @@ class BitgrailApi(object):
 		pass
 
 	def last_price(self):
-		bitgrail_price = 'https://bitgrail.com/api/v1/BTC-XRB/ticker'
+		bitgrail_price = 'https://api.bitgrail.com/v1/BTC-XRB/ticker'
 
 		http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
 		#response = http.request('GET', bitgrail_price, headers=header, timeout=20.0)
@@ -24,11 +23,11 @@ class BitgrailApi(object):
 
 		return float(last_price)
 
-	def balance(self, user_id):
-		bitgrail_balances = 'https://bitgrail.com/api/v1/balances'
+	def balance(self, credentials):
+		bitgrail_balances = 'https://api.bitgrail.com/v1/balances'
 
-		key = cfg.bitgrail_key[user_id].encode('utf-8')
-		secret = cfg.bitgrail_secret[user_id].encode('utf-8')
+		key = credentials['bitgrail_key'].encode('utf-8')
+		secret = credentials['bitgrail_secret'].encode('utf-8')
 		http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
 
 		payload = {'nonce': int(time() * 1000)}

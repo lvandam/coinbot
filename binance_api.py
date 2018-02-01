@@ -1,17 +1,16 @@
-import config as cfg
 from binance.client import Client
 
 class BinanceApi(object):
     def __init__(self):
         pass
 
-    def get_tickers(self, user_id, symbols=[]):
+    def get_tickers(self, credentials, symbols=[]):
         output = {}
 
-        if user_id not in cfg.binance_key:
-            return output
+        if 'binance_key' not in credentials:
+            return balance
 
-        client = Client(api_key=cfg.binance_key[user_id], api_secret=cfg.binance_secret[user_id])
+        client = Client(api_key=credentials['binance_key'], api_secret=credentials['binance_secret'])
         prices = client.get_all_tickers()
 
         for symbol in symbols:
@@ -22,13 +21,13 @@ class BinanceApi(object):
                     output[symbol] = price['price']
         return output
 
-    def balance(self, user_id):
+    def balance(self, credentials):
         balance = {}
 
-        if user_id not in cfg.binance_key:
+        if 'binance_key' not in credentials:
             return balance
 
-        client = Client(api_key=cfg.binance_key[user_id], api_secret=cfg.binance_secret[user_id])
+        client = Client(api_key=credentials['binance_key'], api_secret=credentials['binance_secret'])
         account = client.get_account()
         balances = account['balances']
 
